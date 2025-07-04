@@ -1,6 +1,4 @@
-# Tetris — Minimalist, High-Performance, Cross-Platform
-
-**A modern, lightning-fast, and beautifully minimal Tetris game with a C backend and a Python (tkinter) GUI.**
+## The makefile in this project is useless. Initially, the game was written in pure C, but I wanted to test working with dlls and combine it with Python. ##
 
 ---
 
@@ -51,12 +49,12 @@ pyinstaller --onefile --noconsole --add-binary "tetris.dll;." src/tetris_gui.py
 
 ## Architecture
 - **C Backend** — Handles all game logic, collision, scoring, and field management for maximum speed and reliability.
-- **Python GUI (tkinter)** — Renders the game in a beautiful, minimalist window. Handles user input and displays score/game state.
+- **Python GUI** — Renders the game in a beautiful, minimalist window. Handles user input and displays score/game state.
 - **Communication** — Python calls C functions via ctypes for seamless, real-time updates.
 
 ---
 
-## 💡 Why This Project Stands Out
+## Why This Project Stands Out
 - **Professional code structure** — clean, modular, and easy to extend
 - **No hacks, no bugs, no flicker** — just pure, smooth gameplay
 - **Designed for both learning and fun** — perfect for code review, portfolio, or just playing
@@ -68,5 +66,3 @@ pyinstaller --onefile --noconsole --add-binary "tetris.dll;." src/tetris_gui.py
 **Author:** Subhuman/Tilda/Denis
 **TG:** @TildasSkinPeeler
 **email:** denis02012000@hotmail.com
-
-_This project is a testament to the power of combining low-level performance with high-level beauty. Enjoy!_ 
