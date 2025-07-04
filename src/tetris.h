@@ -18,32 +18,24 @@ enum{
     PLAYING
 };
 
-/**
- * Player action structure
- */
+//Player action structure
 typedef struct TetPlayer{
     int action; // current action
 } TetPlayer;
 
-/**
- * Field block structure
- */
+//Field block structure
 typedef struct Tetblocks{
     int block_arr; // block value (0 = empty, 1 = filled)
 } Tetblocks;
 
-/**
- * Tetris field structure
- */
+//Tetris field structure
 typedef struct TetField{
     int width; // field width
     int height; // field height
     Tetblocks* blocks; // pointer to field blocks
 } TetField;
 
-/**
- * Tetris figure structure
- */
+//Tetris figure structure
 typedef struct TetFigure{
     int x; // x position
     int y; // y position
@@ -51,18 +43,14 @@ typedef struct TetFigure{
     Tetblocks* blocks; // pointer to figure blocks
 } TetFigure;
 
-/**
- * Figure templates structure
- */
+//Figure templates structure
 typedef struct TetFiguresT{
     int count; // number of templates
     int size; // template size
     Tetblocks* blocks; // pointer to template blocks
 } TetFiguresT;
 
-/**
- * Main game structure
- */
+// Main game structure
 typedef struct TetGame{
     TetField* field; // pointer to field
     TetFigure* figure; // pointer to current figure
