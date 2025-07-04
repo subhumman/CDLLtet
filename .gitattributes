@@ -1,0 +1,3 @@
+/build/* linguist-vendored
+*.html linguist-vendored
+*.tex linguist-vendored
