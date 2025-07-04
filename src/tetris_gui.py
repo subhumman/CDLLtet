@@ -2,61 +2,49 @@ import ctypes
 import os
 from tkinter import *
 
-# Параметры поля
-FIELD_WIDTH = 10
+FIELD_WIDTH = 10  # /* Field parameters */
 FIELD_HEIGHT = 20
 CELL_SIZE = 48
 FIGURE_SIZE = 4
 
-# Цвета для фигур (пастельные)
 PASTEL_COLORS = [
-    '#A3CEF1', # I - голубой
-    '#F6D6AD', # O - желтый
-    '#B5EAD7', # T - мятный
-    '#FFB7B2', # S - розовый
-    '#FFDAC1', # Z - персиковый
-    '#C7CEEA', # J - сиреневый
-    '#E2F0CB', # L - светло-зеленый
+    '#A3CEF1',  # /* I - blue */
+    '#F6D6AD',  # /* O - yellow */
+    '#B5EAD7',  # /* T - mint */
+    '#FFB7B2',  # /* S - pink */
+    '#FFDAC1',  # /* Z - peach */
+    '#C7CEEA',  # /* J - lilac */
+    '#E2F0CB',  # /* L - light green */
 ]
-CUBE_COLOR = '#111111'  # черные блоки
-BG_COLOR = '#FFFFFF'    # белый фон
-SCORE_COLOR = '#111111' # черный счет
+CUBE_COLOR = '#111111'  # /* black blocks */
+BG_COLOR = '#FFFFFF'    # /* white background */
+SCORE_COLOR = '#111111' # /* black score */
 
-# Загрузка DLL
-DLL_PATH = os.path.abspath('tetris.dll')
+DLL_PATH = os.path.abspath('tetris.dll')  # /* Load DLL */
 tetris = ctypes.CDLL(DLL_PATH)
 
-# Прототипы функций
-# void tetris_init()
-tetris.tetris_init.restype = None
-# void tetris_step(int action)
-tetris.tetris_step.argtypes = [ctypes.c_int]
+# /* Function prototypes */
+tetris.tetris_init.restype = None  # /* void tetris_init() */
+tetris.tetris_step.argtypes = [ctypes.c_int]  # /* void tetris_step(int action) */
 tetris.tetris_step.restype = None
-# void tetris_get_field(int* out_array)
-tetris.tetris_get_field.argtypes = [ctypes.POINTER(ctypes.c_int)]
+tetris.tetris_get_field.argtypes = [ctypes.POINTER(ctypes.c_int)]  # /* void tetris_get_field(int* out_array) */
 tetris.tetris_get_field.restype = None
-# void tetris_get_figure(int* out_array)
-tetris.tetris_get_figure.argtypes = [ctypes.POINTER(ctypes.c_int)]
+tetris.tetris_get_figure.argtypes = [ctypes.POINTER(ctypes.c_int)]  # /* void tetris_get_figure(int* out_array) */
 tetris.tetris_get_figure.restype = None
-# int tetris_get_gameover()
-tetris.tetris_get_gameover.restype = ctypes.c_int
-# int tetris_get_score()
-tetris.tetris_get_score.restype = ctypes.c_int
-# void tetris_tick()
-tetris.tetris_tick.restype = None
+tetris.tetris_get_gameover.restype = ctypes.c_int  # /* int tetris_get_gameover() */
+tetris.tetris_get_score.restype = ctypes.c_int     # /* int tetris_get_score() */
+tetris.tetris_tick.restype = None                  # /* void tetris_tick() */
 
-# Коды действий (как в C)
-ACTION_NONE = 0
+ACTION_NONE = 0  # /* Action codes (as in C) */
 ACTION_UP = 1
 ACTION_DOWN = 2
 ACTION_LEFT = 3
 ACTION_RIGHT = 4
 
-# Определяем тип фигуры по координатам (для цвета)
+# /* Determine figure type by coordinates (for color) */
 def get_figure_type():
-    # В tetris_api.c cur_type всегда последний сгенерированный тип
-    # Но мы не можем получить его напрямую, поэтому определяем по положению блоков
-    # Для красоты: просто чередуем цвета по номеру блока
+    # /* In tetris_api.c cur_type is always the last generated type */
+    # /* But we can't get it directly, so we alternate colors by block number */
     return (tetris.tetris_get_score() + 1) % len(PASTEL_COLORS)
 
 def c_init_game():
@@ -68,7 +56,7 @@ def c_step_game(action):
 def c_get_field():
     arr = (ctypes.c_int * (FIELD_WIDTH * FIELD_HEIGHT))()
     tetris.tetris_get_field(arr)
-    # Преобразуем в двумерный список
+    # /* Convert to 2D list */
     return [[arr[y*FIELD_WIDTH + x] for x in range(FIELD_WIDTH)] for y in range(FIELD_HEIGHT)]
 
 def c_get_figure():
@@ -90,18 +78,18 @@ def c_get_score():
 
 def draw_field(canvas, field, figure):
     canvas.delete('all')
-    # Фон
+    # /* Background */
     canvas.create_rectangle(0, 0, FIELD_WIDTH*CELL_SIZE, FIELD_HEIGHT*CELL_SIZE, fill=BG_COLOR, outline='')
-    # Поле
+    # /* Field */
     for y in range(FIELD_HEIGHT):
         for x in range(FIELD_WIDTH):
             if field[y][x]:
                 canvas.create_rectangle(x*CELL_SIZE+3, y*CELL_SIZE+3, (x+1)*CELL_SIZE-3, (y+1)*CELL_SIZE-3, fill=CUBE_COLOR, outline='')
-    # Фигура
+    # /* Figure */
     for (fx, fy) in figure:
         if 0 <= fx < FIELD_WIDTH and 0 <= fy < FIELD_HEIGHT:
             canvas.create_rectangle(fx*CELL_SIZE+3, fy*CELL_SIZE+3, (fx+1)*CELL_SIZE-3, (fy+1)*CELL_SIZE-3, fill=CUBE_COLOR, outline='')
-    # Счет
+    # /* Score */
     score = c_get_score()
     canvas.create_text(FIELD_WIDTH*CELL_SIZE//2, 32, text=f'Score: {score}', fill=SCORE_COLOR, font=('Segoe UI', 28, 'bold'))
 
@@ -141,7 +129,7 @@ def restart_game():
 def tick():
     tetris.tetris_tick()
     update()
-    root.after(400, tick)  # только отсюда запускается следующий тик
+    root.after(400, tick)  # /* only from here the next tick is started */
 
 def update():
     field = c_get_field()
@@ -153,7 +141,7 @@ def update():
         canvas.create_text(FIELD_WIDTH*CELL_SIZE//2, FIELD_HEIGHT*CELL_SIZE//2, text='GAME OVER', fill=CUBE_COLOR, font=('Segoe UI', 48, 'bold'))
         show_restart()
 
-# Tkinter GUI
+# /* Tkinter GUI */
 root = Tk()
 root.title('Tetris (C backend + Tkinter GUI)')
 canvas = Canvas(root, width=FIELD_WIDTH*CELL_SIZE, height=FIELD_HEIGHT*CELL_SIZE, bg=BG_COLOR, highlightthickness=0)

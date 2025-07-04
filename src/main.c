@@ -78,7 +78,7 @@ int main(void){
     
     TetGame* game = StartGame(10, 20, 4, 7, figure_template);
     if(!game){
-        printf("SERIOS ERROR");
+        printf("SERIOUS ERROR: Failed to initialize game.\n");
         getchar();
         return 1;
     };
@@ -88,13 +88,13 @@ int main(void){
 
     FILE* log = fopen("log.txt", "w");
     if(!log){
-        printf("BEDA");
+        printf("ERROR: Could not open log file.\n");
     }
 
     // Main game loop
     while(game->playing != GAMEOVER){
         if (log) {
-            fprintf(log, "Состояние игры: %d\n", game->playing);
+            fprintf(log, "Game state: %d\n", game->playing);
             fflush(log);
         }
         if (_kbhit()) {
@@ -131,12 +131,12 @@ int main(void){
 
     // Finish
     if (log) {
-        fprintf(log, "Игра завершена\n");
+        fprintf(log, "Game finished.\n");
         fclose(log);
     };
 
     freeStartGame(game);
-    printf("enter");
+    printf("Press Enter to exit.");
     while(getchar() != '\n'); // wait for Enter
 
     return 0;

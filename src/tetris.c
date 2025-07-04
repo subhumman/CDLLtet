@@ -5,20 +5,27 @@
 #ifndef TETRIS_C
 #define TETRIS_C
 
-// Memory is freed in cleanup functions for all mallocs
+// All memory allocations are freed in cleanup functions
 
+/**
+ * Create a new Tetris field.
+ * @param width Field width
+ * @param height Field height
+ * @return Pointer to TetField
+ */
 TetField* createField(int width, int height){
-    TetField* field = (TetField*)malloc(sizeof(TetField)); // allocate field
-    field->width = width; // set width
-    field->height = height; // set height
-    field->blocks = (Tetblocks*)malloc(sizeof(Tetblocks)*width*height); // allocate blocks
-    // we will be think that blocks is None of field -> blocks[i].block_arr = 0. (do it at loop)
+    TetField* field = (TetField*)malloc(sizeof(TetField));
+    field->width = width;
+    field->height = height;
+    field->blocks = (Tetblocks*)malloc(sizeof(Tetblocks)*width*height);
     for(unsigned i = 0; i < width*height; i++)
         field->blocks[i].block_arr = 0; // empty block
-    return field; // return field
+    return field;
 };
 
-// Memory is freed twice and in reverse order because memory was allocated twice
+/**
+ * Free memory allocated for the field.
+ */
 void freeFieldMemory(TetField* field){
     if(field){
         if(field->blocks)
@@ -27,7 +34,9 @@ void freeFieldMemory(TetField* field){
     };
 };
 
-// this func about create figures template.
+/**
+ * Create figure templates structure.
+ */
 TetFiguresT* createFiguresT(int count, int figure_size, Tetblocks* figureT){
     TetFiguresT* figT = (TetFiguresT*)malloc(sizeof(TetFiguresT));
     figT->blocks = figureT;
@@ -36,15 +45,19 @@ TetFiguresT* createFiguresT(int count, int figure_size, Tetblocks* figureT){
     return figT;
 };
 
-// func for memory free of figure template. Memory was allocated once, so it should be freed once. 
+/**
+ * Free memory for figure templates structure.
+ */
 void freeFigTemplateMalloc(TetFiguresT* figure){
     if(figure)
         free(figure);
 };
 
+/**
+ * Initialize a new Tetris game.
+ */
 TetGame* StartGame(int field_w, int field_h, int figure_size, int count, Tetblocks* figure_templates){
-    TetGame* tetg = (TetGame*)malloc(sizeof(TetGame)); // allocate game struct
-    // For now, let's assume we already have methods that define the following structures.
+    TetGame* tetg = (TetGame*)malloc(sizeof(TetGame));
     tetg->field = createField(field_w, field_h);
     tetg->figurest = createFiguresT(count, figure_size, figure_templates);
     tetg->ticks = TET_TICKS_START;
@@ -53,8 +66,10 @@ TetGame* StartGame(int field_w, int field_h, int figure_size, int count, Tetbloc
     tetg->score = 0;
     return tetg;
 };
- 
-// func for freed memory of all game. Once we freed struct components, twice - structure
+
+/**
+ * Free all memory for the game.
+ */
 void freeStartGame(TetGame* game){
     if(game){
         freeFieldMemory(game->field);
@@ -63,27 +78,38 @@ void freeStartGame(TetGame* game){
     };
 };
 
-
-// now will most interest part - procedure programming for actions
-
+/**
+ * Move the current figure down by one cell.
+ */
 void figureDrop(TetGame* tetg){
-// for move figure down we must do y++
     tetg->figure->y--;
 };
 
+/**
+ * Move the current figure up by one cell (undo drop).
+ */
 void figureUp(TetGame* tetg){
     tetg->figure->y++;
 };
 
+/**
+ * Move the current figure left by one cell.
+ */
 void moveFigureLeft(TetGame* tetg){
     tetg->figure->x--;
 };
 
+/**
+ * Move the current figure right by one cell.
+ */
 void moveFigureRight(TetGame* tetg){
     tetg->figure->x++;
 };
 
-// some interest func for colision figure!!!!!!!!
+/**
+ * Check for collision between the figure and the field or boundaries.
+ * @return 1 if collision, 0 otherwise
+ */
 int colision(TetGame* tetg){
     TetFigure* figure = tetg->figure;
     TetField* field = tetg->field;
@@ -104,7 +130,9 @@ int colision(TetGame* tetg){
     return 0; // no collision
 };
 
-// процедура размещения фигуры после падения.
+/**
+ * Place the current figure onto the field after it lands.
+ */
 void plantFigure(TetGame* tetg){
     TetFigure* figure = tetg->figure;
     TetField* field = tetg->field;
@@ -121,56 +149,64 @@ void plantFigure(TetGame* tetg){
     }
 }
 
-// функция для проверки заполнения строки
+/**
+ * Check if a line is completely filled.
+ * @return 1 if full, 0 otherwise
+ */
 int lineFill(int pos, TetField* field){
     for(unsigned j = 0; j < field->width; j++)
-        if(field->blocks[pos*field->width+j].block_arr == 0) // if empty block found, line is not full
+        if(field->blocks[pos*field->width+j].block_arr == 0)
             return 0;
-    return 1; // line is full
+    return 1;
 };
 
-// функция сдвига на одну строку вниз
+/**
+ * Drop all lines above the given position by one.
+ */
 void dropLine(int pos, TetField* field){
     if(pos == 0){
-        for(int j = 0; j > field->width; j++)
-            field->blocks[j].block_arr = 0; // clear line
+        for(int j = 0; j < field->width; j++)
+            field->blocks[j].block_arr = 0;
     }else{
-        // весь процесс повторяется для k от текущей позиции к первой.
-        for(unsigned k = pos; k > 0; k++){
+        for(unsigned k = pos; k > 0; k--){
             for(unsigned j = 0; j < field->width; j++){
                 field->blocks[k*field->width + j].block_arr = 
-                field->blocks[(k-1)*field->width + j].block_arr; // move line down
+                field->blocks[(k-1)*field->width + j].block_arr;
             };
         };
     };
 };
 
-// функция, удаляющая заполненные строки и считающая их количество
+/**
+ * Remove filled lines and return the number of lines removed.
+ */
 int eraseTet(TetGame* tetg){
     TetField* field = tetg->field;
-    int count = 0; // removed lines
-    for(int i = field->height-1; i >= 0; i--){ // from last line up
-        while(lineFill(i, field)){ // check if line is full
-           dropLine(i, field); // remove line
-           count++; // increment score
+    int count = 0;
+    for(int i = field->height-1; i >= 0; i--){
+        while(lineFill(i, field)){
+           dropLine(i, field);
+           count++;
         };
     };
-    return count; // return score
+    return count;
 };
 
-// создание новой фигуры
+/**
+ * Create a new figure for the game.
+ */
 TetFigure* createFigure(TetGame* tetg){
-    printf("createFigure called\n"); fflush(stdout);
     TetFigure* figure = (TetFigure*)malloc(sizeof(TetFigure));
     figure->x = 0;
     figure->y = 0;
-    figure->size = tetg->figurest->size; // set figure size
+    figure->size = tetg->figurest->size;
     figure->blocks = (Tetblocks*)malloc(sizeof(Tetblocks) * figure->size * figure->size);
-    printf("createFigure malloc ok\n"); fflush(stdout);
     return figure;
 };
 
-// удаление фигуры из памяти
+/**
+ * Free memory for a figure.
+ */
 void freeFigure(TetFigure* figure){
     if(figure){
         if(figure->blocks)
@@ -179,11 +215,11 @@ void freeFigure(TetFigure* figure){
     };
 };
 
-// сброс новой фигуры
+/**
+ * Drop a new figure into the game. Ends game if placement collides.
+ */
 void dropNewFigure(TetGame* tetg){
-    printf("dropNewFigure called\n"); fflush(stdout);
     TetFigure* figure = createFigure(tetg);
-    printf("createFigure ok\n"); fflush(stdout);
     figure->x = tetg->field->width/2 - figure->size/2;
     figure->y = 0;
     int fnum = rand() % tetg->figurest->count;
@@ -193,19 +229,18 @@ void dropNewFigure(TetGame* tetg){
             tetg->figurest->blocks[fnum*figure->size * figure->size + i*figure->size + j].block_arr;
         }
     }
-    printf("before freeFigure\n"); fflush(stdout);
     freeFigure(tetg->figure);
-    printf("after freeFigure\n"); fflush(stdout);
     tetg->figure = figure;
     if(colision(tetg)) {
         tetg->playing = GAMEOVER;
     }
-    printf("dropNewFigure end\n"); fflush(stdout);
 }
 
-// rotation figure fucn
+/**
+ * Rotate the current figure clockwise.
+ * @return Pointer to new rotated figure
+ */
 TetFigure* rotationFigure(TetGame* tetg){
-    printf("rotationFigure called\n"); fflush(stdout);
     TetFigure* figure = createFigure(tetg);
     TetFigure* old = tetg->figure;
     figure->x = old->x;
@@ -215,13 +250,14 @@ TetFigure* rotationFigure(TetGame* tetg){
             figure->blocks[i*figure->size + j].block_arr =
             old->blocks[j * figure->size + figure->size - 1 - i].block_arr;
         }
-    printf("rotationFigure done\n"); fflush(stdout);
     return figure;
 };
 
-// this func foe calculate one tact game loop
+/**
+ * Perform one tick of the game loop: move, drop, erase, and spawn figures.
+ */
 void calculate_game(TetGame* tetg){
-    // Автоматическое падение фигуры по таймеру
+    // Automatic figure drop by timer
     tetg->left_ticks--;
     if(tetg->left_ticks <= 0){
         tetg->left_ticks = tetg->ticks;
@@ -237,7 +273,7 @@ void calculate_game(TetGame* tetg){
             }
         }
     }
-    // Управление игроком
+    // Handle player input
     switch(tetg->player->action){
         case TET_PLAYER_LEFT:
             moveFigureLeft(tetg);
@@ -250,24 +286,22 @@ void calculate_game(TetGame* tetg){
                 moveFigureLeft(tetg);
             break;
         case TET_PLAYER_DOWN:
-            tetg->left_ticks = 0;
+            figureDrop(tetg);
+            if(colision(tetg))
+                figureUp(tetg);
             break;
-        case TET_PLAYER_UP:{ // rotate
-            printf("TET_PLAYER_UP: rotation start\n"); fflush(stdout);
-            TetFigure* t = rotationFigure(tetg); // new figure
-            TetFigure* told = tetg->figure; // old figure
-            tetg->figure = t; // try new figure
+        case TET_PLAYER_UP: {
+            TetFigure* rotated = rotationFigure(tetg);
+            TetFigure* old = tetg->figure;
+            tetg->figure = rotated;
             if(colision(tetg)){
-                printf("TET_PLAYER_UP: collision after rotation, revert\n"); fflush(stdout);
-                freeFigure(t); // удаляем только новую!
-                tetg->figure = told; // возвращаем старую
-            }else{
-                printf("TET_PLAYER_UP: rotation ok, free old\n"); fflush(stdout);
-                freeFigure(told); // удаляем только старую!
+                freeFigure(rotated);
+                tetg->figure = old;
+            } else {
+                freeFigure(old);
             }
             break;
         }
-        case TET_PLAYER_NOPE:
         default:
             break;
     }
