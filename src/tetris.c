@@ -5,8 +5,6 @@
 #ifndef TETRIS_C
 #define TETRIS_C
 
-// All memory allocations are freed in cleanup functions
-
 /**
  * Create a new Tetris field.
  * @param width Field width
@@ -23,7 +21,7 @@ TetField* createField(int width, int height){
     return field;
 };
 
-//Free memory allocated for the field.
+/* Free memory allocated for the field.*/
 void freeFieldMemory(TetField* field){
     if(field){
         if(field->blocks)
@@ -32,7 +30,7 @@ void freeFieldMemory(TetField* field){
     };
 };
 
-//Create figure templates structure
+/* Create figure templates structure. */
 TetFiguresT* createFiguresT(int count, int figure_size, Tetblocks* figureT){
     TetFiguresT* figT = (TetFiguresT*)malloc(sizeof(TetFiguresT));
     figT->blocks = figureT;
@@ -41,13 +39,13 @@ TetFiguresT* createFiguresT(int count, int figure_size, Tetblocks* figureT){
     return figT;
 };
 
-//Free memory for figure templates structure.
+/* Free memory for figure templates structure.*/
 void freeFigTemplateMalloc(TetFiguresT* figure){
     if(figure)
         free(figure);
 };
 
-//Initialize a new Tetris game.
+/* Initialize a new Tetris game.*/
 TetGame* StartGame(int field_w, int field_h, int figure_size, int count, Tetblocks* figure_templates){
     TetGame* tetg = (TetGame*)malloc(sizeof(TetGame));
     tetg->field = createField(field_w, field_h);
@@ -59,7 +57,7 @@ TetGame* StartGame(int field_w, int field_h, int figure_size, int count, Tetbloc
     return tetg;
 };
 
-//Free all memory for the game
+/* Free all memory for the game.*/
 void freeStartGame(TetGame* game){
     if(game){
         freeFieldMemory(game->field);
@@ -68,22 +66,22 @@ void freeStartGame(TetGame* game){
     };
 };
 
-//Move the current figure down by one cell.
+/* Move the current figure down by one cell.*/
 void figureDrop(TetGame* tetg){
     tetg->figure->y--;
 };
 
-//Move the current figure up by one cell (undo drop)
+/* Move the current figure up by one cell (undo drop).*/
 void figureUp(TetGame* tetg){
     tetg->figure->y++;
 };
 
-//Move the current figure left by one cell.
+/* Move the current figure left by one cell.*/
 void moveFigureLeft(TetGame* tetg){
     tetg->figure->x--;
 };
 
-//Move the current figure right by one cell.
+/* Move the current figure right by one cell.*/
 void moveFigureRight(TetGame* tetg){
     tetg->figure->x++;
 };
@@ -112,7 +110,7 @@ int colision(TetGame* tetg){
     return 0; // no collision
 };
 
-//Place the current figure onto the field after it lands.
+/* Place the current figure onto the field after it lands.*/
 void plantFigure(TetGame* tetg){
     TetFigure* figure = tetg->figure;
     TetField* field = tetg->field;
@@ -140,7 +138,7 @@ int lineFill(int pos, TetField* field){
     return 1;
 };
 
-//Drop all lines above the given position by one.
+/* Drop all lines above the given position by one */
 void dropLine(int pos, TetField* field){
     if(pos == 0){
         for(int j = 0; j < field->width; j++)
@@ -155,7 +153,7 @@ void dropLine(int pos, TetField* field){
     };
 };
 
-//Remove filled lines and return the number of lines removed.
+/* Remove filled lines and return the number of lines removed.*/
 int eraseTet(TetGame* tetg){
     TetField* field = tetg->field;
     int count = 0;
@@ -168,7 +166,7 @@ int eraseTet(TetGame* tetg){
     return count;
 };
 
-//Create a new figure for the game.
+/* Create a new figure for the game.*/
 TetFigure* createFigure(TetGame* tetg){
     TetFigure* figure = (TetFigure*)malloc(sizeof(TetFigure));
     figure->x = 0;
@@ -178,7 +176,7 @@ TetFigure* createFigure(TetGame* tetg){
     return figure;
 };
 
-//Free memory for a figure.
+/* Free memory for a figure.*/
 void freeFigure(TetFigure* figure){
     if(figure){
         if(figure->blocks)
@@ -187,7 +185,7 @@ void freeFigure(TetFigure* figure){
     };
 };
 
-//Drop a new figure into the game. Ends game if placement collides.
+/* Drop a new figure into the game. Ends game if placement collides.*/
 void dropNewFigure(TetGame* tetg){
     TetFigure* figure = createFigure(tetg);
     figure->x = tetg->field->width/2 - figure->size/2;
@@ -223,7 +221,7 @@ TetFigure* rotationFigure(TetGame* tetg){
     return figure;
 };
 
-//Perform one tick of the game loop: move, drop, erase, and spawn figures
+/* Perform one tick of the game loop: move, drop, erase, and spawn figures */
 void calculate_game(TetGame* tetg){
     // Automatic figure drop by timer
     tetg->left_ticks--;

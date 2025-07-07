@@ -2,16 +2,16 @@ import ctypes
 import os
 from tkinter import *
 
-FIELD_WIDTH = 10  #Field parameter
+FIELD_WIDTH = 10  # Field parameters 
 FIELD_HEIGHT = 20
 CELL_SIZE = 48
 FIGURE_SIZE = 4
 
-CUBE_COLOR = '#111111'  #black blocks
-BG_COLOR = '#FFFFFF'    #white background
-SCORE_COLOR = '#111111' #black score
+CUBE_COLOR = '#111111' 
+BG_COLOR = '#FFFFFF'    
+SCORE_COLOR = '#111111' 
 
-DLL_PATH = os.path.abspath('tetris.dll')  #Load DLL
+DLL_PATH = os.path.abspath('tetris.dll')  # Load DLL
 tetris = ctypes.CDLL(DLL_PATH)
 
 # Function prototypes
@@ -26,14 +26,16 @@ tetris.tetris_get_gameover.restype = ctypes.c_int  # int tetris_get_gameover()
 tetris.tetris_get_score.restype = ctypes.c_int     # int tetris_get_score()
 tetris.tetris_tick.restype = None                  # void tetris_tick()
 
-ACTION_NONE = 0  #Action codes (as in C)
+ACTION_NONE = 0  # Action codes (as in C)
 ACTION_UP = 1
 ACTION_DOWN = 2
 ACTION_LEFT = 3
 ACTION_RIGHT = 4
 
-# Determine figure type by coordinates (for color)
+#  Determine figure type by coordinates (for color) 
 def get_figure_type():
+    # In tetris_api.c cur_type is always the last generated type
+    # But we can't get it directly, so we alternate colors by block number
     return (tetris.tetris_get_score() + 1)
 
 def c_init_game():
@@ -45,6 +47,7 @@ def c_step_game(action):
 def c_get_field():
     arr = (ctypes.c_int * (FIELD_WIDTH * FIELD_HEIGHT))()
     tetris.tetris_get_field(arr)
+    # Convert to 2D list
     return [[arr[y*FIELD_WIDTH + x] for x in range(FIELD_WIDTH)] for y in range(FIELD_HEIGHT)]
 
 def c_get_figure():
@@ -129,6 +132,7 @@ def update():
         canvas.create_text(FIELD_WIDTH*CELL_SIZE//2, FIELD_HEIGHT*CELL_SIZE//2, text='GAME OVER', fill=CUBE_COLOR, font=('Segoe UI', 48, 'bold'))
         show_restart()
 
+# Tkinter GUI
 root = Tk()
 root.title('Tetris (C backend + Tkinter GUI)')
 canvas = Canvas(root, width=FIELD_WIDTH*CELL_SIZE, height=FIELD_HEIGHT*CELL_SIZE, bg=BG_COLOR, highlightthickness=0)

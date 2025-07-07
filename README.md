@@ -1,6 +1,5 @@
-## The makefile in this project is useless. Initially, the game was written in pure C, but I wanted to test working with dlls and combine it with Python. ##
+**!!!!! The makefile in this project is useless. Initially, the game was written in pure C, but I wanted to test working with dlls and combine it with Python.**
 
----
 
 ## Features
 - **True Classic Tetris Mechanics** — pure, fair, and bug-free gameplay
@@ -54,7 +53,7 @@ pyinstaller --onefile --noconsole --add-binary "tetris.dll;." src/tetris_gui.py
 
 ---
 
-## Why This Project Stands Out
+## 💡 Why This Project Stands Out
 - **Professional code structure** — clean, modular, and easy to extend
 - **No hacks, no bugs, no flicker** — just pure, smooth gameplay
 - **Designed for both learning and fun** — perfect for code review, portfolio, or just playing
@@ -66,3 +65,5 @@ pyinstaller --onefile --noconsole --add-binary "tetris.dll;." src/tetris_gui.py
 **Author:** Subhuman/Tilda/Denis
 **TG:** @TildasSkinPeeler
 **email:** denis02012000@hotmail.com
+
+_This project is a testament to the power of combining low-level performance with high-level beauty. Enjoy!_ 

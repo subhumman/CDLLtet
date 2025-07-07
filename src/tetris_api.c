@@ -15,7 +15,7 @@
 #define FIGURE_SIZE 4
 #define FIGURE_COUNT 7
 
-// Классические фигуры 4x4 (I, O, T, S, Z, J, L)
+// Classic 4x4 figures (I, O, T, S, Z, J, L)
 static const int figures[FIGURE_COUNT][FIGURE_SIZE * FIGURE_SIZE] = {
     {0,0,0,0, 1,1,1,1, 0,0,0,0, 0,0,0,0}, // I
     {1,1,0,0, 1,1,0,0, 0,0,0,0, 0,0,0,0}, // O
@@ -26,7 +26,7 @@ static const int figures[FIGURE_COUNT][FIGURE_SIZE * FIGURE_SIZE] = {
     {0,0,1,0, 1,1,1,0, 0,0,0,0, 0,0,0,0}  // L
 };
 
-// Игровое поле и фигура
+// Game field and figure
 static int field[FIELD_HEIGHT][FIELD_WIDTH];
 static int cur_figure[FIGURE_SIZE * FIGURE_SIZE];
 static int cur_x, cur_y, cur_type, cur_rot;
@@ -34,7 +34,7 @@ static int score = 0;
 static int gameover = 0;
 static int tick = 0;
 
-// Вспомогательные функции
+// Helper functions
 static void clear_field() {
     memset(field, 0, sizeof(field));
 }
@@ -100,7 +100,7 @@ static void new_figure() {
         gameover = 1;
 }
 
-// Экспортируемые функции
+// Exported functions
 EXPORT void tetris_init() {
     srand((unsigned)time(NULL));
     clear_field();
