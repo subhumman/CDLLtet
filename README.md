@@ -13,8 +13,8 @@
 ---
 
 ## Screenshots
-> _Add your screenshots here!_
-![Tetris Gameplay](screenshots/tetris_game.png)
+<img width="747" height="1471" alt="image" src="https://github.com/user-attachments/assets/78e1f815-a9c3-4a38-ae21-34813c09c72c" />
+
 ---
 
 ## How to Build & Run
@@ -65,5 +65,6 @@ pyinstaller --onefile --noconsole --add-binary "tetris.dll;." src/tetris_gui.py
 **Author:** Subhuman/Tilda/Denis
 **TG:** @TildasSkinPeeler
 **email:** denis02012000@hotmail.com
+
 
 _This project is a testament to the power of combining low-level performance with high-level beauty. Enjoy!_ 
