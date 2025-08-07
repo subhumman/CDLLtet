@@ -53,19 +53,4 @@ pyinstaller --onefile --noconsole --add-binary "tetris.dll;." src/tetris_gui.py
 
 ---
 
-## 💡 Why This Project Stands Out
-- **Professional code structure** — clean, modular, and easy to extend
-- **No hacks, no bugs, no flicker** — just pure, smooth gameplay
-- **Designed for both learning and fun** — perfect for code review, portfolio, or just playing
-- **A showcase of hybrid C/Python engineering**
-
----
-
-##  Credits
-**Author:** Subhuman/Tilda/Denis
-**TG:** @TildasSkinPeeler
-**email:** denis02012000@hotmail.com
-
-
-_This project is a testament to the power of combining low-level performance with high-level beauty. Enjoy!_ 
 
