@@ -13,7 +13,7 @@
 ---
 
 ## Screenshots
-<img width="747" height="1471" alt="image" src="https://github.com/user-attachments/assets/78e1f815-a9c3-4a38-ae21-34813c09c72c" />
+<img width="347" height="1071" alt="image" src="https://github.com/user-attachments/assets/78e1f815-a9c3-4a38-ae21-34813c09c72c" />
 
 ---
 
@@ -68,3 +68,4 @@ pyinstaller --onefile --noconsole --add-binary "tetris.dll;." src/tetris_gui.py
 
 
 _This project is a testament to the power of combining low-level performance with high-level beauty. Enjoy!_ 
+
